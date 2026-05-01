@@ -1,0 +1,489 @@
+airline_id,name,country
+1,Air 26,Angola
+2,Air Asia X,Indonesia
+3,Air Bucharest,Romania
+4,Air Century,Dominican Republic
+5,Air Cudlua,United Kingdom
+6,Air Engiadina-BRN,Switzerland
+7,Air Italy Egypt,Egypt
+8,AlbaStar,Spain
+9,Alghanim,United States
+10,AtlasGlobal Ukraine,Ukraine
+11,Austrian Airlines,Austria
+12,BA101,United Kingdom
+13,Bingo Airways,Poland
+14,Boliviana de Aviacion,Bolivia
+15,CBM America,United States
+16,Cathay Pacific,Hong Kong
+17,Church Fenton Flying Training Unit,United Kingdom
+18,Comfort Express Virtual Charters Albany,United States
+19,Compania de Aviacion Faucett,Peru
+20,Coningsby Flying Training Unit,United Kingdom
+21,Cranwell Flying Training Unit,United Kingdom
+22,Dan-Air London,United Kingdom
+23,Direct Aero Services,Romania
+24,Eagle Canyon Airlines,United States
+25,East Horizon,Afghanistan
+26,Eastern Atlantic Charters,United States
+27,EgyptAir Express,Egypt
+28,Egyptair,Egypt
+29,Enerjet,Canada
+30,Executive AirShare,United States
+31,FLYJET,Poland
+32,FTI Fluggesellschaft,Germany
+33,Finlandian,Finland
+34,Flugfelag Vestmannaeyja,Iceland
+35,Fly Africa Zimbabwe,Zimbabwe
+36,Flybe Finland Oy,Finland
+37,Go2Sky,Slovakia
+38,Golden Myanmar Airlines,Burma
+39,Grand China Air,China
+40,Hellenic Star Airways,Greece
+41,Holidays Czech Airlines,Czech Republic
+42,Inter European Airways,United Kingdom
+43,Jet Suite,United States
+44,Jupiter Airlines,United Arab Emirates
+45,Kan Air,Thailand
+46,Korea Express Air,South Korea
+47,LIO Flugmennt,Iceland
+48,Leeming Flying Training Unit,United Kingdom
+49,Lossiemouth Flying Training Unit,United Kingdom
+50,Malaysia Wings,Malaysia
+51,Mann Yadanarpon Airlines,Burma
+52,Marham Flying Training Unit,United Kingdom
+53,Medallion Air,Romania
+54,Norlandair,Iceland
+55,Northwood Headquarters,United Kingdom
+56,Norwegian Air International,Norway
+57,Nurnberger Flugdienst,Germany
+58,OCEAN AIR CARGO,India
+59,Pouya Air,Iran
+60,Princely Jets,Pakistan
+61,Priority Aviation Company,United States
+62,Private Jet Management,United States
+63,Privilege Style L,Spain
+64,Pro Air,United States
+65,Pro Air Service,United States
+66,Professional Express Courier Service,United States
+67,Professione VOlare,Italy
+68,Promotora Industria Totolapa,Mexico
+69,Ptarmigan Airways,Canada
+70,Puma Linhas Aereas,Brazil
+71,Puntavia Air Services,Djibouti
+72,Pyramid Air Lines,Egypt
+73,Qanot Sharq,Uzbekistan
+74,Qatar Air Cargo,Qatar
+75,Qatar Amiri Flight,Qatar
+76,Quantex Environmental,Canada
+77,Quebec Government Air Service,Canada
+78,Quest Diagnostics,United States
+79,Quick Air Jet Charter,Germany
+80,Quisqueya Airlines,Haiti
+81,RAF Leuchars,United Kingdom
+82,RAF St Athan,United Kingdom
+83,RAF Valley SAR Training Unit,United Kingdom
+84,Race Cargo Airlines,Ghana
+85,Ram Aircraft Corporation,United States
+86,Rangemile Limited,United Kingdom
+87,Raven Air,United States
+88,Ray Aviation,Israel
+89,Raya Jet,Jordan
+90,Raytheon Aircraft Company,United States
+91,Real Aeroclub De Ternerife,Spain
+92,Red Arrows Display Squadron,United Kingdom
+93,Red Sea Aviation,Egypt
+94,Reed Aviation,United Kingdom
+95,Reef Air,New Zealand
+96,Regional Air,Mauritania
+97,Regional Air Express,Germany
+98,Renan,Moldova
+99,Renown Aviation,United States
+100,Riau Airlines,Indonesia
+101,Richards Aviation,United States
+102,Richardson's Airway,United States
+103,Richland Aviation,United States
+104,Rick Lucas Helicopters,New Zealand
+105,Ridder Avia,Kazakhstan
+106,Rikspolisstyrelsen,Sweden
+107,River Ministries Air Charter,South Africa
+108,Rivne Universal Avia,Ukraine
+109,Rog-Air,Canada
+110,Roraima Airways,Guyana
+111,Rossair,South Africa
+112,Rotana Jet,United Arab Emirates
+113,Rotormotion,United Kingdom
+114,Rover Airways International,United States
+115,Royal Air Force,United Kingdom
+116,Royal American Airways,United States
+117,Royal Aviation Express,Canada
+118,Royal Bahrain Airlines,Bahrain
+119,Royal Daisy Airlines,Uganda
+120,Royal Oman Police,Oman
+121,Royal Phnom Penh Airways,Cambodia
+122,Rubystar,Belarus
+123,Rusline,Russia
+124,Russkie Krylya,Russia
+125,Rutas Aereas,Venezuela
+126,Rutland Aviation,United Kingdom
+127,Rwanda Airlines,Rwanda
+128,Rynes Aviation,United States
+129,S C Ion Tiriac,Romania
+130,S.P. Aviation,United States
+131,SADELCA - Sociedad Aerea Del Caqueta,Colombia
+132,SAM Colombia,Colombia
+133,SANSA,Costa Rica
+134,SASCO Airlines,Sudan
+135,SENEAM,Mexico
+136,STA-MALI,Mali
+137,STAC Swiss Government Flights,Switzerland
+138,SUR Lineas Aereas,Argentina
+139,Sabang Merauke Raya Air Charter,Indonesia
+140,Saber Airlines,Egypt
+141,Safari Express Cargo,Kenya
+142,Safarilink Aviation,Kenya
+143,Safe Air,Pakistan
+144,Saha Airlines Services,Iran
+145,Sahel Aviation Service,Mali
+146,Saint Barth Commuter,France
+147,Sakaviaservice,Georgia
+148,Salair,United States
+149,Salem,Kazakhstan
+150,Salpa Aviation,Sudan
+151,Samal Air,Kazakhstan
+152,Samar Air,Tajikistan
+153,Samarkand Airways,Uzbekistan
+154,Samson Aviation,United Kingdom
+155,Sark International Airways,United Kingdom
+156,Savanah Airlines,Nigeria
+157,Seacoast Airlines,United States
+158,Searca,Colombia
+159,Seco International,Japan
+160,Second Sverdlovsk Air Enterprise,Russia
+161,Secretaria de Marina,Mexico
+162,Sector Airlines,Canada
+163,Sedona Air Center,United States
+164,Selcon Airlines,Nigeria
+165,Selkirk Remote Sensing,Canada
+166,Sella Aviation,Netherlands
+167,Sentel Corporation,United States
+168,Servicio Aereo Saltillo,Mexico
+169,Servicio De Viglancia Aerea Del Ministerio De Seguridad Publica,Costa Rica
+170,Servicio Tecnico Aero De Mexico,Mexico
+171,Servicios Aereos Avandaro,Mexico
+172,Servicios Aereos Del Norte,Mexico
+173,Servicios Aereos Ejecutivos De La Laguna,Mexico
+174,Servicios Aereos La Marquesa,Mexico
+175,Servicios Aereos Luce,Mexico
+176,Servicios Aereos Nacionales,Ecuador
+177,Servicios Aereos Premier,Mexico
+178,Servicios Aereos Profesionales,Dominican Republic
+179,Servicios Aereos San Cristobal,Mexico
+180,Servicios Aereos Slainte,Mexico
+181,Servicios Aereos Sunset,Mexico
+182,Servicios Aereos Universitarios,Mexico
+183,Servicios Aereos de Chihuahua Aerochisa,Mexico
+184,Servicios Aereos de Los Angeles,Mexico
+185,Servicios Aeronauticos Aero Personal,Mexico
+186,Servicios De Rampa Y Mostrador,Mexico
+187,Servicios De Transporte Aereo,Mexico
+188,Servicios Ejecutivos Gosa,Mexico
+189,Servicios Intergrales De Aviacion,Mexico
+190,Servico Aereo Regional,Mozambique
+191,Servicos De Alquiler,Mexico
+192,Servizi Aerei,Italy
+193,Sevastopol-Avia,Ukraine
+194,Seven Bar Flying Service,United States
+195,Sevenair,Tunisia
+196,Severstal,Russia
+197,Shaheen Air Cargo,Pakistan
+198,Shalom Air Services,Nigeria
+199,Sham Wing Airlines,Syrian Arab Republic
+200,Shans Air,Russia
+201,Shawnee Airline,United States
+202,Sheremetyevo-Cargo,Russia
+203,Shooter Air Courier,Canada
+204,Shuangyang General Aviation,China
+205,Silesia Air,Czech Republic
+206,Simrik Airlines,Nepal
+207,Sioux Falls Aviation,United States
+208,Sirvair,Mexico
+209,Skif-Air,Ukraine
+210,Sky Airlines,Turkey
+211,Sky Bahamas,Bahamas
+212,Sky Bus,United States
+213,Sky Exec Aviation Services,Nigeria
+214,Sky Gate International Aviation,Kyrgyzstan
+215,Sky Harbor Air Service,United States
+216,Sky Jet,Switzerland
+217,Sky Limo Corporation,United States
+218,Sky Wings Airlines,Greece
+219,Skydrift,United Kingdom
+220,Skyfreight,United States
+221,Skyjet,Kazakhstan
+222,Skyline,Nigeria
+223,Skymaster Air Taxi,United States
+224,Skyplan Services,Canada
+225,Skypower Express Airways,Nigeria
+226,Skyways,Argentina
+227,Slate Falls Airways,Canada
+228,Slovak Air Force,Slovakia
+229,Slovak Government Flying Service,Slovakia
+230,Smalandsflyg,Sweden
+231,Socofer,Angola
+232,Solent Flight,United Kingdom
+233,Solinair,Slovenia
+234,Sonair Servico Aereo,Angola
+235,Soonair Lines,United States
+236,South African Non Scheduled Airways,South Africa
+237,South Central Air,United States
+238,South Coast Aviation,United Kingdom
+239,South Pacific Island Airways,United States
+240,South West Air,Canada
+241,Southeast Airmotive,United States
+242,Southern Air Charter,Bahamas
+243,Southern Airways,United States
+244,Southern Cargo Air Lines,Russia
+245,Southern Cross Aviation,United States
+246,Southern Ohio Aviation Sales,United States
+247,Southern Right Air Charter,South Africa
+248,Spanish Air Force,Spain
+249,Special Scope Limited,United Kingdom
+250,Spectrem Air,South Africa
+251,Spectrum Air Service,United States
+252,Spirit of Africa Airlines,Sudan
+253,Stadium City Limited,United Kingdom
+254,Star Air,Indonesia
+255,Star Aviation,United Kingdom
+256,Star Up,Peru
+257,Star XL German Airlines,Germany
+258,Starair,Ireland
+259,Starspeed,United Kingdom
+260,State Air Company Berkut,Kazakhstan
+261,Stephenville Aviation Services,Canada
+262,Stichting Vliegschool 16Hoven,Netherlands
+263,Streamline,South Africa
+264,Styrian Airways,Austria
+265,Suburban Air Freight,United States
+266,Sud Airlines,France
+267,Sun Freight Logistics,Thailand
+268,Sun Pacific International,United States
+269,Sun West Airlines,United States
+270,Sunbird Airlines,United States
+271,Sundance Air,Venezuela
+272,Sundorph Aeronautical Corporation,United States
+273,Sunshine Air Tours,United States
+274,Sunwest Aviation (Lindquist Investment),United States
+275,Sunwest Home Aviation,Canada
+276,Super Luza,Angola
+277,Surninam International Victory Airline,Suriname
+278,Survey Udara (Penas),Indonesia
+279,Svenska Direktflyg,Sweden
+280,Swazi Express Airways,Swaziland
+281,Swedeways,Sweden
+282,Swedish Airlines,Sweden
+283,Swift Air (Interstate Equipment Leasing),United States
+284,Swiss Air Force,Switzerland
+285,Swiss Air-Ambulance,Switzerland
+286,TAB Express International,United States
+287,TAF Helicopters,Spain
+288,TAG Aviation USA,United States
+289,TAPC Aviatrans Aircompany,Uzbekistan
+290,TG Aviation,United Kingdom
+291,TLC Air,United States
+292,TRAM,Mauritania
+293,Taban Air Lines,Iran
+294,Tadair,Spain
+295,Taftan Airlines,Iran
+296,Tag Aviation UK,United Kingdom
+297,Tajikair,Tajikistan
+298,Tajikstan,Tajikistan
+299,Tamir Airways,Israel
+300,Tango Bravo,France
+301,Taquan Air Services,United States
+302,Tar Heel Aviation,United States
+303,Tas Aviation,United States
+304,Tashkent Aircraft Production Corporation,Uzbekistan
+305,Taunus Air Gmbh,Germany
+306,Taxi Aereo Cozatl,Mexico
+307,Taxi de Veracruz,Mexico
+308,Taxirey,Mexico
+309,Taxis Aereos De Parral,Mexico
+310,Taxis Turisticos Marakame,Mexico
+311,Tbilisi Aviation University,Georgia
+312,Tecnicas Fotograficas,Spain
+313,Teledyne Continental Motors,United States
+314,Telford Aviation,United States
+315,Temsco Helicopters,United States
+316,Tenir Airlines,Kyrgyzstan
+317,Texas Air Charters,United States
+318,Texas Airlines,United States
+319,Thai Flying Helicopter Service,Thailand
+320,Thai Pacific Airlines Business,Thailand
+321,The Army Aviation Heritage Foundation,United States
+322,The Lancair Company,United States
+323,Tikal Jets Airlines,Guatemala
+324,Timberline Air,Canada
+325,Tiphook PLC,United Kingdom
+326,Tobago Express,Trinidad and Tobago
+327,Tomsk-Avia,Russia
+328,Top Sky International,Indonesia
+329,Top Speed,Austria
+330,Top-Fly,Spain
+331,Toumai Air Tchad,Chad
+332,Trabajos Aereos,Spain
+333,Trabajos Aereos Murcianos,Spain
+334,Trabajos Aereos Vascongados,Spain
+335,Tradewind Aviation,United States
+336,Tradewinds Airlines,United States
+337,Trading Air Cargo,Mauritania
+338,Tramon Air,South Africa
+339,Tramson Limited,Sudan
+340,Tranporte Aereo Dominicano,Dominican Republic
+341,Tranporte Amazonair,Venezuela
+342,Trans Air Charter,United States
+343,Trans Air-Benin,Benin
+344,Trans Am Compania,Ecuador
+345,Trans American Airlines (Trans Am),Peru
+346,Trans Asian Airlines,Kazakhstan
+347,Trans Atlantic Airlines,Sierra Leone
+348,Trans Continental Airlines,United States
+349,Trans Euro Air,United Kingdom
+350,Trans Jet Airways,Sweden
+351,Trans-Air-Link,United States
+352,Trans-Pacific Orient Airways,Philippines
+353,Transafrik International,Sao Tome and Principe
+354,Transarabian Transportation Services,Uganda
+355,Transaustralian Air Express,Australia
+356,Transaven,Venezuela
+357,Transaviabaltika,Lithuania
+358,Transbrasil,Brazil
+359,Transcontinental Airlines,Kazakhstan
+360,Transcontinental Sur,Uruguay
+361,Transnorthern,United States
+362,Transpac Express,Australia
+363,Transport Africa,Sierra Leone
+364,Transport Canada,Canada
+365,Transport Facilitators,United States
+366,Transportacion Aerea De Queretaro,Mexico
+367,Transportacion Aerea Del Mar De Cortes,Mexico
+368,Transportacion Aerea del Norte,Mexico
+369,Transporte Aereo Ernesto Saenz,Mexico
+370,Transportes Aereos De Xalapa,Mexico
+371,Transportes Aereos Don Carlos,Chile
+372,Transportes Aereos Regionales,Mexico
+373,Transportes Aereos del Mundo Maya,Mexico
+374,Transwede Airways,Sweden
+375,Travel Express Aviation Services,Indonesia
+376,Travel International Air Charters,Zambia
+377,Travelair,Germany
+378,Trinity Air Bahamas,Bahamas
+379,Triple Alpha,Germany
+380,Tuna Aero,Sweden
+381,Tunisavia,Tunisia
+382,Twin Town Leasing Company,United States
+383,Twinjet Aircraft Sales,United Kingdom
+384,Tyrol Air Ambulance,Austria
+385,UFS,United States
+386,US Army Parachute Team,United States
+387,US Check Airlines,United States
+388,US Marshals Service,United States
+389,UTAGE,Equatorial Guinea
+390,Ues-Avia Aircompany,Ukraine
+391,Uganda Airlines,Uganda
+392,Ukraine Air Alliance,Ukraine
+393,Ukraine Transavia,Ukraine
+394,Unijet,France
+395,United Arab Emirates Air Force,United Arab Emirates
+396,United Arabian Airlines,Sudan
+397,United Kingdom Civil Aviation Authority,United Kingdom
+398,United Kingdom Royal VIP Flight,United Kingdom
+399,United Kingdom Royal VIP Flights,United Kingdom
+400,United States Coast Guard Auxiliary,United States
+401,United States Department Of Agriculture,United States
+402,Universal Airlines,Guyana
+403,Universal Airways,United States
+404,Universal Jet,Spain
+405,Universal Jet Aviation,United States
+406,University Air Squadron,United Kingdom
+407,University of North Dakota,United States
+408,Unsped Paket Servisi,Turkey
+409,Uraiavia,Russia
+410,VIM-Aviaservice,Russia
+411,VIP Air,Slovakia
+412,VIP-Avia,Georgia
+413,VZ Flights,Mexico
+414,Vacationair,Canada
+415,Valan Limited,Moldova
+416,Vega,Kazakhstan
+417,Vega Air Company,Ukraine
+418,Vega Aviation,Sudan
+419,Veritair Ltd,United Kingdom
+420,Vertair,United Kingdom
+421,Vertical-T Air Company,Russia
+422,Vichi,Moldova
+423,Vickers Limited,United Kingdom
+424,Victor Tagle Larrain,Chile
+425,Viking Airlines,Sweden
+426,Viscount Air Service,United States
+427,Vistajet,Canada
+428,Voar Lda,Angola
+429,Vointeh,Bulgaria
+430,Volare Airlines,Ukraine
+431,Volga Aviaexpress,Russia
+432,Voronezh Aircraft Manufacturing Society,Russia
+433,Vuelos Internos Privados VIP,Ecuador
+434,WRA Inc,United States
+435,WSI Corporation,United States
+436,Waddington FTU,United Kingdom
+437,Walmart Aviation,United States
+438,Walsten Air Services,Canada
+439,Walter I Linkoping,Sweden
+440,Wapiti Aviation,Canada
+441,Warbelow's Air Ventures,United States
+442,Weasua Air Transport Company,Liberia
+443,Welch Aviation,United States
+444,West African Airlines,Benin
+445,West Air Luxembourg,Luxembourg
+446,West Coast Airlines,Ghana
+447,Westair Aviation,Namibia
+448,Western Air,Bahamas
+449,Western Arctic Air,Canada
+450,Western Aviators,United States
+451,Westland Helicopters,United Kingdom
+452,White,Portugal
+453,White Eagle Aviation,Poland
+454,Whyalla Airlines,Australia
+455,Wiggins Airways,United States
+456,Wiking Helikopter Service,Germany
+457,Williams Air,United States
+458,Winair,United States
+459,Wind Rose Aviation,Ukraine
+460,Wind Spirit Air,United States
+461,Windrose Air,Germany
+462,Wings Air Transport,Sudan
+463,Wings Airways,United States
+464,Wings Aviation,Guyana
+465,Wings of Lebanon Aviation,Lebanon
+466,Winlink,Saint Lucia
+467,Wisman Aviation,United States
+468,Woodgate Executive Air Charter,United Kingdom
+469,Worldwide Jet Charter,United States
+470,XP Internation,Netherlands
+471,Xclusive Jet Charter Limited,United Kingdom
+472,Xerox Corporation,United States
+473,YES Airways,Poland
+474,Yak-Service,Russia
+475,Yellow Wings Air Services,Kenya
+476,Yuzhmashavia,Ukraine
+477,Yuzhnaya Aircompany,Kazakhstan
+478,Z-Avia,Armenia
+479,Zagros Airlines,Iran
+480,Zaire Aero Service,Democratic Republic of Congo
+481,Zanair,Tanzania
+482,Zantop International Airlines,United States
+483,Zapolyarie Airlines,Russia
+484,Zenith Air,South Africa
+485,Zephyr Express,United States
+486,Zhejiang Airlines,China
+487,Zhez Air,Kazakhstan
+488,Zorex,Spain

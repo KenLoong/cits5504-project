@@ -1,0 +1,101 @@
+route_id,airline_id,dep_airport_id,arr_airport_id,equipment
+1,380,1799,232,Harbin Yunshuji Y12;De Havilland Canada DHC-6 Twin Otter;Pilatus Britten-Norman BN-2A/B Islander
+2,380,2216,1455,Harbin Yunshuji Y12;De Havilland Canada DHC-6 Twin Otter;Pilatus Britten-Norman BN-2A/B Islander
+3,380,547,1799,Harbin Yunshuji Y12;De Havilland Canada DHC-6 Twin Otter
+4,380,232,1799,Harbin Yunshuji Y12;De Havilland Canada DHC-6 Twin Otter
+5,380,105,2443,Harbin Yunshuji Y12;Pilatus Britten-Norman BN-2A/B Islander
+6,380,788,2443,Harbin Yunshuji Y12;Pilatus Britten-Norman BN-2A/B Islander
+7,380,1455,2216,Harbin Yunshuji Y12;Pilatus Britten-Norman BN-2A/B Islander
+8,380,2443,105,Harbin Yunshuji Y12;Pilatus Britten-Norman BN-2A/B Islander
+9,380,2443,113,Harbin Yunshuji Y12;Pilatus Britten-Norman BN-2A/B Islander
+10,380,113,788,Harbin Yunshuji Y12
+11,380,606,1061,Harbin Yunshuji Y12
+12,380,606,232,Harbin Yunshuji Y12
+13,380,788,113,Harbin Yunshuji Y12
+14,380,1061,606,Harbin Yunshuji Y12
+15,380,1061,2443,Harbin Yunshuji Y12
+16,380,1061,232,Harbin Yunshuji Y12
+17,380,1682,810,Harbin Yunshuji Y12
+18,380,2328,1682,Harbin Yunshuji Y12
+19,380,2443,1061,Harbin Yunshuji Y12
+20,380,2580,232,Harbin Yunshuji Y12
+21,380,232,547,Harbin Yunshuji Y12
+22,380,232,606,Harbin Yunshuji Y12
+23,380,232,1061,Harbin Yunshuji Y12
+24,21,1713,2341,Yakovlev Yak-40
+25,21,2341,1713,Yakovlev Yak-40
+26,21,2341,1272,Yakovlev Yak-40
+27,21,1272,2341,Yakovlev Yak-40
+28,98,625,2228,Yakovlev Yak-42;Embraer 190
+29,428,1229,1987,Yakovlev Yak-42;Airbus A320
+30,428,1987,1229,Yakovlev Yak-42;Airbus A320
+31,21,249,2658,Yakovlev Yak-42
+32,21,2341,2658,Yakovlev Yak-42
+33,21,2575,2658,Yakovlev Yak-42
+34,21,2658,249,Yakovlev Yak-42
+35,21,2658,2341,Yakovlev Yak-42
+36,21,2658,2575,Yakovlev Yak-42
+37,98,2795,2228,Yakovlev Yak-42
+38,98,1627,2228,Yakovlev Yak-42
+39,98,2228,2795,Yakovlev Yak-42
+40,98,2228,1627,Yakovlev Yak-42
+41,98,2228,1272,Yakovlev Yak-42
+42,98,1272,2228,Yakovlev Yak-42
+43,244,625,1078,Yakovlev Yak-42
+44,244,625,1316,Yakovlev Yak-42
+45,244,1078,625,Yakovlev Yak-42
+46,244,1078,2027,Yakovlev Yak-42
+47,244,1316,625,Yakovlev Yak-42
+48,244,2027,1078,Yakovlev Yak-42
+49,428,817,1229,Yakovlev Yak-42
+50,428,682,1229,Yakovlev Yak-42
+51,428,1229,817,Yakovlev Yak-42
+52,428,1229,682,Yakovlev Yak-42
+53,96,1634,2508,Tupolev Tu-154;Boeing 737-800
+54,96,2508,1634,Tupolev Tu-154;Boeing 737-800
+55,21,1819,2135,Tupolev Tu-154
+56,21,1819,2573,Tupolev Tu-154
+57,21,2135,1819,Tupolev Tu-154
+58,21,2573,1819,Tupolev Tu-154
+59,96,625,1972,Tupolev Tu-154
+60,96,2508,1972,Tupolev Tu-154
+61,96,1972,625,Tupolev Tu-154
+62,96,1972,2508,Tupolev Tu-154
+63,57,37,1594,Tupolev Tu-134
+64,57,725,1505,Tupolev Tu-134
+65,96,1634,2736,Tupolev Tu-134;Antonov AN-24
+66,96,2736,1634,Tupolev Tu-134;Antonov AN-24
+67,96,2755,1634,Tupolev Tu-134
+68,96,1634,2755,Tupolev Tu-134
+69,57,1505,725,Tupolev Tu-134
+70,57,2412,1594,Tupolev Tu-134
+71,57,1594,37,Tupolev Tu-134
+72,57,1594,2412,Tupolev Tu-134
+73,478,625,2736,Tupolev Tu-204;Boeing 767-300
+74,478,625,1022,Tupolev Tu-204;Boeing 747-400
+75,478,1022,625,Tupolev Tu-204;Boeing 747-400
+76,241,2296,1137,Tupolev Tu-204;Airbus A320;Antonov An-158;Airbus A319
+77,241,1137,2296,Tupolev Tu-204;Airbus A320;Antonov An-158;Airbus A319
+78,378,2032,1299,Tupolev Tu-204
+79,378,2032,2444,Tupolev Tu-204
+80,378,2032,2657,Tupolev Tu-204
+81,378,1299,2032,Tupolev Tu-204
+82,378,2444,2032,Tupolev Tu-204
+83,378,2657,2032,Tupolev Tu-204
+84,478,351,625,Tupolev Tu-204
+85,478,625,351,Tupolev Tu-204
+86,307,783,894,Aerospatiale/Alenia ATR 42-300
+87,307,894,783,Aerospatiale/Alenia ATR 42-300
+88,307,894,1814,Aerospatiale/Alenia ATR 42-300
+89,307,1814,894,Aerospatiale/Alenia ATR 42-300
+90,402,1225,2736,Sukhoi Superjet 100-95;De Havilland Canada DHC-8-400 Dash 8Q
+91,402,2736,1225,Sukhoi Superjet 100-95;De Havilland Canada DHC-8-400 Dash 8Q
+92,78,625,2495,Sukhoi Superjet 100-95;Boeing 737-700
+93,78,2495,625,Sukhoi Superjet 100-95;Boeing 737-700
+94,438,2276,985,Sukhoi Superjet 100-95;Boeing 737
+95,438,2276,629,Sukhoi Superjet 100-95;Airbus A320;Airbus A319
+96,438,305,2276,Sukhoi Superjet 100-95;Airbus A320
+97,438,2276,1786,Sukhoi Superjet 100-95;Airbus A320
+98,438,2276,305,Sukhoi Superjet 100-95;Airbus A319
+99,438,1228,2276,Sukhoi Superjet 100-95;Airbus A319
+100,438,2276,1228,Sukhoi Superjet 100-95;Airbus A319

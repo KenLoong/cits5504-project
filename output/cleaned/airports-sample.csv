@@ -1,0 +1,101 @@
+airport_id,name,city,country
+1,A Coruna Airport,La Coruna,Spain
+2,Aalborg Airport,Aalborg,Denmark
+3,Aarhus Airport,Aarhus,Denmark
+4,Abadan Airport,Abadan,Iran
+5,Abakan Airport,Abakan,Russia
+6,Abbotsford Airport,Abbotsford,Canada
+7,Abdul Rachman Saleh Airport,Malang,Indonesia
+8,Abeid Amani Karume International Airport,Zanzibar,Tanzania
+9,Abel Santamaria Airport,Santa Clara,Cuba
+10,Aberdeen Dyce Airport,Aberdeen,United Kingdom
+11,Abha Regional Airport,Abha,Saudi Arabia
+12,Abilene Regional Airport,Abilene,United States
+13,Abraham Gonzalez International Airport,Ciudad Juarez,Mexico
+14,Abraham Lincoln Capital Airport,Springfield,United States
+15,Abu Dhabi International Airport,Abu Dhabi,United Arab Emirates
+16,Abu Simbel Airport,Abu Simbel,Egypt
+17,Achmad Yani Airport,Semarang,Indonesia
+18,Adak Airport,Adak Island,United States
+19,Adana Airport,Adana,Turkey
+20,Addis Ababa Bole International Airport,Addis Ababa,Ethiopia
+21,Adelaide International Airport,Adelaide,Australia
+22,Aden Adde International Airport,Mogadishu,Somalia
+23,Aden International Airport,Aden,Yemen
+24,Adi Sumarmo Wiryokusumo Airport,Solo City,Indonesia
+25,Adi Sutjipto International Airport,Yogyakarta,Indonesia
+26,Adiyaman Airport,Adiyaman,Turkey
+27,Adnan Menderes International Airport,Izmir,Turkey
+28,Adolfo Suarez Madrid Barajas Airport,Madrid,Spain
+29,Afonso Pena Airport,Curitiba,Brazil
+30,Agartala Airport,Agartala,India
+31,Agatti Airport,Agatti Island,India
+32,Agen-La Garenne Airport,Agen,France
+33,Agra Airport,Agra,India
+34,Agri Airport,Agri,Turkey
+35,Aguenar Hadj Bey Akhamok Airport,Tamanrasset,Algeria
+36,Ahe Airport,Ahe,French Polynesia
+37,Ahwaz Airport,Ahwaz,Iran
+38,Ain Arnat Airport,Setif,Algeria
+39,Ain el Beida Airport,Ouargla,Algeria
+40,Aitutaki Airport,Aitutaki,Cook Islands
+41,Ajaccio-Napoleon Bonaparte Airport,Ajaccio,France
+42,Akanu Ibiam International Airport,Enugu,Nigeria
+43,Akita Airport,Akita,Japan
+44,Akron Canton Regional Airport,Akron,United States
+45,Aksu Airport,Aksu,China
+46,Aktau Airport,Aktau,Kazakhstan
+47,Aktion National Airport,Preveza,Greece
+48,Aktobe Airport,Aktyubinsk,Kazakhstan
+49,Akureyri Airport,Akureyri,Iceland
+50,Akwa Ibom International Airport,Uyo,Nigeria
+51,Al Ahsa Airport,Al-ahsa,Saudi Arabia
+52,Al Ain International Airport,Al Ain,United Arab Emirates
+53,Al Baha Airport,El-baha,Saudi Arabia
+54,Al Ghaidah International Airport,Al Ghaidah Intl,Yemen
+55,Al Maktoum International Airport,Dubai,United Arab Emirates
+56,Al Massira Airport,Agadir,Morocco
+57,Al Najaf International Airport,Najaf,Iraq
+58,Al Qaisumah/Hafr Al Batin Airport,Hafr Al-batin,Saudi Arabia
+59,Al Wajh Domestic Airport,Wejh,Saudi Arabia
+60,Al-Jawf Domestic Airport,Al-Jawf,Saudi Arabia
+61,Alama Iqbal International Airport,Lahore,Pakistan
+62,Alashankou Bole (Bortala) airport,Bole,China
+63,Albany Airport,Albany,Australia
+64,Albany International Airport,Albany,United States
+65,Albert J Ellis Airport,Jacksonville NC,United States
+66,Alberto Alcolumbre Airport,Macapa,Brazil
+67,Alberto Carnevalli Airport,Merida,Venezuela
+68,Albuquerque International Sunport,Albuquerque,United States
+69,Albury Airport,Albury,Australia
+70,Alderney Airport,Alderney,Guernsey
+71,Alejandro Velasco Astete International Airport,Cuzco,Peru
+72,Alesund Airport,Alesund,Norway
+73,Alexander the Great International Airport,Kavala,Greece
+74,Alexandria International Airport,Alexandria,United States
+75,Alferez Fap David Figueroa Fernandini Airport,Huanuco,Peru
+76,Alfonso Bonilla Aragon International Airport,Cali,Colombia
+77,Alfonso Lopez Pumarejo Airport,Valledupar,Colombia
+78,Alfredo Vasquez Cobo International Airport,Leticia,Colombia
+79,Alghero-Fertilia Airport,Alghero,Italy
+80,Alicante International Airport,Alicante,Spain
+81,Alice Springs Airport,Alice Springs,Australia
+82,Allahabad Airport,Allahabad,India
+83,Alluitsup Paa Heliport,Alluitsup Paa,Greenland
+84,Almaty Airport,Alma-ata,Kazakhstan
+85,Almeria International Airport,Almeria,Spain
+86,Almirante Marco Andres Zar Airport,Trelew,Argentina
+87,Almirante Padilla Airport,Rio Hacha,Colombia
+88,Alta Airport,Alta,Norway
+89,Altai Airport,Altai,Mongolia
+90,Altamira Airport,Altamira,Brazil
+91,Altay Air Base,Altay,China
+92,Altoona Blair County Airport,Altoona,United States
+93,Amado Nervo National Airport,Tepic,Mexico
+94,Amasya Merzifon Airport,Merzifon,Turkey
+95,Amborovy Airport,Mahajanga,Madagascar
+96,Amilcar Cabral International Airport,Amilcar Cabral,Cape Verde
+97,Amsterdam Airport Schiphol,Amsterdam,Netherlands
+98,Anadolu Airport,Eskissehir,Turkey
+99,Anaktuvuk Pass Airport,Anaktuvuk Pass,United States
+100,Anapa Vityazevo Airport,Anapa,Russia
