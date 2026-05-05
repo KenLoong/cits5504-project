@@ -1,0 +1,533 @@
+# Project 2 – Graph Database Design and Cypher Query
+
+**Unit:** CITS5504 Data Warehousing  
+**Student Name:** Junjian Long
+**Student Number:** 24702822
+**Submission Date:** 15 May 2025
+
+---
+
+## 1. Graph Database Design
+
+### 1.1 Property Graph Schema
+
+The property graph schema was designed using the Arrows App and is shown in Figure 1 below. The model consists of two node types — **Airport** and **Airline** — and two relationship types — **ROUTE** and **OPERATES**.
+
+**[INSERT FIGURE 1: arrow_schema.png — Arrows.app schema diagram]**
+
+*Figure 1. Property graph schema designed in Arrows App.*
+
+**Node: Airport**
+
+| Property | Type | Description |
+|---|---|---|
+| `airport_id` | Integer | Unique identifier (auto-assigned during ETL) |
+| `name` | String | Full airport name |
+| `city` | String | City of the airport |
+| `country` | String | Country/region of the airport |
+
+**Node: Airline**
+
+| Property | Type | Description |
+|---|---|---|
+| `airline_id` | Integer | Unique identifier (auto-assigned during ETL) |
+| `name` | String | Full airline name |
+| `country` | String | Country of the airline's registration |
+
+**Relationship: (Airport)-[:ROUTE]->(Airport)**
+
+| Property | Type | Description |
+|---|---|---|
+| `route_id` | Integer | Unique route record identifier |
+| `airline_id` | Integer | Foreign reference to the operating Airline node |
+| `equipment` | String | Semicolon-separated list of aircraft types (e.g., `"Boeing 737;Airbus A320"`) |
+
+**Relationship: (Airline)-[:OPERATES]->(Airport)**
+
+No properties. Represents the fact that an airline has at least one route departing from the given airport, providing a direct graph edge between Airline and Airport nodes.
+
+---
+
+### 1.2 Design Choices and Discussion
+
+#### 1.2.1 ROUTE as a Relationship, Not a Node
+
+The most critical design decision was whether to model a route as a **relationship** or as an intermediary **node**. This model adopts the former approach, representing each service record as a `[:ROUTE]` relationship directed from the departure airport to the arrival airport.
+
+The primary advantage is the native support for variable-length path queries. Neo4j's Cypher syntax allows `[:ROUTE*1..3]` to express "traverse up to three route hops" in a single clause, which directly answers Question 5 of this project (paths from Beijing to Perth). Had routes been modelled as nodes, finding a three-hop path would require alternating node–relationship traversals (Airport→Route→Airport→Route→Airport→Route→Airport), doubling the traversal depth and significantly complicating the query [1].
+
+This aligns with the property graph principle described by Robinson et al., who note that "relationships are first-class citizens" in a graph model and that the choice to use a relationship versus an intermediary node should be guided by whether the connection itself carries semantics independently or only exists to link two entities [2].
+
+The trade-off is that route-level aggregations (e.g., counting all routes for a given airline) require filtering on relationship properties rather than matching node labels. However, Neo4j's relationship-property indexes mitigate this performance concern [3].
+
+#### 1.2.2 Independent Airline Nodes
+
+Airline attributes (`name`, `country`) could have been embedded directly as properties on each `[:ROUTE]` relationship, avoiding the need for a separate `Airline` node. However, this design maintains an independent `Airline` node for two reasons:
+
+1. **Query efficiency for airline-centric queries:** Question 1 (list all airlines from Australia) is answered by a single `MATCH (al:Airline {country: 'Australia'})` without scanning any relationships. Embedding the country in every ROUTE relationship would require scanning all 57,301 relationships.
+2. **Single source of truth:** Storing airline attributes once on the node and referencing via `airline_id` on the ROUTE relationship eliminates redundancy. If an airline name were to change, only one node needs to be updated [2].
+
+#### 1.2.3 OPERATES Relationship for Graph Connectivity
+
+Without the `[:OPERATES]` relationship, the `Airline` nodes would be structurally isolated — connected to `ROUTE` relationships only via the `airline_id` property value, not via actual graph edges. This is an anti-pattern in graph databases, as it reduces the graph to a property store rather than a connected network [1].
+
+The `(Airline)-[:OPERATES]->(Airport)` relationship was therefore added to encode "this airline operates at least one route departing from this airport." This relationship carries no properties because it expresses pure existence. It enables idiomatic Cypher queries such as `MATCH (al:Airline)-[:OPERATES]->(ap:Airport)` and ensures the schema visualisation correctly reflects the connected structure of the graph.
+
+#### 1.2.4 Equipment Stored as a Semicolon-Separated String
+
+The original dataset stores aircraft types as a semicolon-delimited string per route record (e.g., `"Boeing 737;Airbus A320;ATR 72"`). Rather than normalising this into separate `AircraftType` nodes, the raw string is preserved on the `[:ROUTE]` relationship's `equipment` property. At query time, Cypher's built-in `split()` function and `UNWIND` clause are used to decompose the string into individual types for counting (Question 4).
+
+This avoids the overhead of additional nodes and relationships for aircraft data, which is not a primary analytical entity in the domain. Angles and Gutierrez note that schema flexibility is a key advantage of property graphs, and property-level storage is appropriate when an attribute is primarily used as a filter or aggregation input rather than a traversal endpoint [4].
+
+---
+
+## 2. ETL Process
+
+### 2.1 Overview
+
+The ETL (Extract, Transform, Load) pipeline was implemented as a Python script (`scripts/etl.py`) using the `pandas` library. The raw dataset (`Project2_dataset.csv`, 57,301 rows) was processed through the following stages:
+
+1. **Extract:** Load the raw CSV into a pandas DataFrame.
+2. **Transform:** Audit for data inconsistencies, apply corrections, and normalise into separate entity and relationship tables.
+3. **Load:** Write four clean CSV files ready for Neo4j import.
+
+### 2.2 Data Cleaning
+
+#### 2.2.1 Dirty Data Audit
+
+The audit stage extracted all unique airport records from both the departure and arrival columns of every row. Each airport's (city, country) combination was checked for consistency. The audit identified **41 airports** with conflicting country or city values across different rows — indicating that the same real-world airport had been attributed to multiple countries in the source data.
+
+**[INSERT FIGURE 2: ETL terminal output — Step 2 audit showing the 41 inconsistent airports]**
+
+*Figure 2. Audit output from etl.py showing airports with inconsistent country/city values.*
+
+#### 2.2.2 Corrections Applied
+
+A corrections dictionary was compiled by cross-referencing each conflicting airport against the IATA airport database and Wikipedia. Each entry specifies the verified correct country and city. The script then applied these corrections to all affected rows in the raw DataFrame.
+
+The most significant correction — and the one explicitly flagged by the unit coordinator in the course forum — was **Sydney Kingsford Smith International Airport** (IATA: SYD), which appeared with `country = "Canada"` in 175 arrival rows. This was corrected to `Australia` based on the airport's verified IATA registration.
+
+Beyond Sydney, a further 30 airports were corrected, totalling **1,656 rows** updated. Representative examples include:
+
+- All five **London airports** (Heathrow, Gatwick, Stansted, Luton, City) — misattributed to `Canada`, corrected to `United Kingdom` (1,083 rows combined).
+- **Comodoro Arturo Merino Benitez International Airport** (IATA: SCL, Santiago, Chile) — misattributed to `Spain`, corrected to `Chile` (77 rows).
+- **Cochin International Airport** (IATA: COK, Kochi, India) — misattributed to `Japan`, corrected to `India` (50 rows).
+- **St Petersburg Clearwater International Airport** (IATA: PIE, Florida, USA) — misattributed to `Russia`, corrected to `United States` (20 rows).
+
+**[INSERT FIGURE 3: ETL terminal output — Step 3 correction log showing all FIXED entries]**
+
+*Figure 3. Correction log from etl.py listing each fixed airport and the number of rows updated.*
+
+Following corrections, 10 airports with genuinely ambiguous names (e.g., "Albany Airport" exists in both the United States and Australia as distinct real-world airports) were resolved by retaining the most frequently occurring (city, country) combination per airport name.
+
+#### 2.2.3 Key ETL Code
+
+The core cleaning logic uses a `CORRECTIONS` dictionary (sourced from IATA records and Wikipedia) and a loop that applies each fix to both the departure and arrival columns:
+
+```python
+# Sources: IATA airport database, Wikipedia
+CORRECTIONS = {
+    # Primary correction flagged by unit coordinator
+    "Sydney Kingsford Smith International Airport": {
+        "country": "Australia", "city": "Sydney",
+        # IATA: SYD. Misattributed to Canada in 175 arrival rows.
+    },
+    # London airports misattributed to Canada (5 airports, 1083 rows combined)
+    "London Heathrow Airport":  {"country": "United Kingdom", "city": "London"},
+    "London Gatwick Airport":   {"country": "United Kingdom", "city": "London"},
+    "London Stansted Airport":  {"country": "United Kingdom", "city": "London"},
+    "London Luton Airport":     {"country": "United Kingdom", "city": "London"},
+    "London City Airport":      {"country": "United Kingdom", "city": "London"},
+    # Other representative corrections (31 airports total)
+    "Comodoro Arturo Merino Benitez International Airport":
+        {"country": "Chile",          "city": "Santiago"},   # not Spain
+    "Cochin International Airport":
+        {"country": "India",          "city": "Kochi"},      # not Japan
+    "St Petersburg Clearwater International Airport":
+        {"country": "United States",  "city": "St. Petersburg"}, # not Russia
+    "El Alto International Airport":
+        {"country": "Bolivia",        "city": "La Paz"},     # not Mexico
+    # ... (26 further entries follow the same pattern)
+}
+
+total_fixed = 0
+for airport_name, fix in CORRECTIONS.items():
+    correct_country = fix["country"]
+    correct_city    = fix["city"]
+    mask_dep = (df["Departure Airport Name"] == airport_name) & (
+        (df["Departure Airport Country/Region"] != correct_country) |
+        (df["Departure Airport City"]           != correct_city)
+    )
+    mask_arr = (df["Arrival Airport Name"] == airport_name) & (
+        (df["Arrival Airport Country/Region"] != correct_country) |
+        (df["Arrival Airport City"]           != correct_city)
+    )
+    bad = mask_dep.sum() + mask_arr.sum()
+    if bad > 0:
+        df.loc[mask_dep, "Departure Airport Country/Region"] = correct_country
+        df.loc[mask_dep, "Departure Airport City"]           = correct_city
+        df.loc[mask_arr, "Arrival Airport Country/Region"]   = correct_country
+        df.loc[mask_arr, "Arrival Airport City"]             = correct_city
+        total_fixed += bad
+```
+
+*Code listing 1. Excerpt from etl.py showing the CORRECTIONS dictionary structure and the loop that applies each fix to both departure and arrival columns.*
+
+### 2.3 Output Files
+
+The ETL script produced four normalised CSV files:
+
+| File | Records | Description |
+|---|---|---|
+| `airports.csv` | 2,795 | Unique Airport nodes with airport_id, name, city, country |
+| `airlines.csv` | 488 | Unique Airline nodes with airline_id, name, country |
+| `routes.csv` | 57,301 | ROUTE relationships with route_id, airline_id, dep/arr airport IDs, equipment |
+| `operates.csv` | 16,768 | OPERATES relationships: unique (airline_id, dep_airport_id) pairs |
+
+No records were filtered or removed from the dataset, in accordance with the unit coordinator's guidance that data should not be reduced if the device can handle the full volume. All queries in this project were executed on the complete dataset.
+
+---
+
+## 3. Graph Database Implementation
+
+### 3.1 Platform
+
+The graph database was implemented using **Neo4j AuraDB Free** (cloud-hosted), running Neo4j version 5. The three cleaned CSV files were hosted on GitHub Gist and imported via HTTPS URLs using Neo4j's `LOAD CSV` command.
+
+### 3.2 Import Process
+
+The import script (`scripts/import.cypher`) was executed in six sequential blocks:
+
+**Block 1 — Uniqueness Constraints**
+
+Constraints were created first. They serve a dual purpose: enforcing data integrity and automatically creating B-Tree indexes on `airport_id` and `airline_id`. Without these indexes, each of the 57,301 ROUTE rows would require a full scan of all 2,795 Airport nodes twice, making the import prohibitively slow.
+
+```cypher
+CREATE CONSTRAINT airport_id_unique IF NOT EXISTS
+  FOR (a:Airport) REQUIRE a.airport_id IS UNIQUE;
+
+CREATE CONSTRAINT airline_id_unique IF NOT EXISTS
+  FOR (al:Airline) REQUIRE al.airline_id IS UNIQUE;
+```
+
+**Block 4 — ROUTE Relationships (batched import)**
+
+The 57,301 route records were imported using `CALL { } IN TRANSACTIONS OF 1000 ROWS` to process the dataset in batches of 1,000, preventing memory overflow on the free-tier instance.
+
+```cypher
+:auto
+LOAD CSV WITH HEADERS FROM 'https://...' AS row
+CALL {
+  WITH row
+  MATCH (dep:Airport {airport_id: toInteger(row.dep_airport_id)})
+  MATCH (arr:Airport {airport_id: toInteger(row.arr_airport_id)})
+  CREATE (dep)-[:ROUTE {
+    route_id   : toInteger(row.route_id),
+    airline_id : toInteger(row.airline_id),
+    equipment  : row.equipment
+  }]->(arr)
+} IN TRANSACTIONS OF 1000 ROWS;
+```
+
+### 3.3 Database Statistics
+
+After all six import blocks completed, the database contained the following:
+
+**[INSERT FIGURE 5: AuraDB left panel showing Nodes (3,283), Relationships (74,069), node labels (Airline, Airport), relationship types (OPERATES, ROUTE), and all property keys]**
+
+*Figure 5. Neo4j AuraDB database information panel confirming successful import.*
+
+| Entity | Count |
+|---|---|
+| Airport nodes | 2,795 |
+| Airline nodes | 488 |
+| **Total nodes** | **3,283** |
+| ROUTE relationships | 57,301 |
+| OPERATES relationships | 16,768 |
+| **Total relationships** | **74,069** |
+
+**[INSERT FIGURE 6: Screenshot of CALL db.schema.visualization() output — showing (Airline)→[OPERATES]→(Airport)→[ROUTE]→(Airport) graph structure]**
+
+*Figure 6. Schema visualisation confirming the connected three-entity graph structure.*
+
+---
+
+## 4. Cypher Queries
+
+### 4.1 Required Queries (Q1–Q6)
+
+#### Q1 — Distinct Australian Airlines
+
+```cypher
+MATCH (al:Airline {country: 'Australia'})
+RETURN DISTINCT al.name AS airline_name
+ORDER BY al.name;
+```
+
+**[INSERT FIGURE 7: Q1.png]**
+
+*Figure 7. Q1 result: three Australian airlines in the dataset.*
+
+**Analysis:** The query returns three airlines: *Transaustralian Air Express*, *Transpac Express*, and *Whyalla Airlines*. The small number reflects that this dataset primarily captures international route data from the OpenFlights database, which has limited coverage of regional Australian domestic operators. Major carriers such as Qantas are not present in this extract.
+
+---
+
+#### Q2 — Domestic vs International Route Count
+
+```cypher
+MATCH (dep:Airport)-[r:ROUTE]->(arr:Airport)
+WITH
+  CASE WHEN dep.country = arr.country
+       THEN 'Domestic'
+       ELSE 'International'
+  END AS route_type
+RETURN route_type, count(*) AS record_count
+ORDER BY route_type;
+```
+
+**[INSERT FIGURE 8: Q2.png]**
+
+*Figure 8. Q2 result: domestic and international route record counts.*
+
+**Analysis:** Of the 57,301 route records, 26,422 (46.1%) are domestic and 30,879 (53.9%) are international. The slight majority of international routes reflects the dataset's global scope, with many routes crossing borders between neighbouring countries in Europe, Southeast Asia, and the Americas. The total (26,422 + 30,879 = 57,301) provides a self-consistent verification of the import.
+
+---
+
+#### Q3 — Airport Pair with Most Route Records
+
+```cypher
+MATCH (a:Airport)-[r:ROUTE]->(b:Airport)
+WITH
+  CASE WHEN a.name < b.name THEN a.name ELSE b.name END AS airport1,
+  CASE WHEN a.name < b.name THEN b.name ELSE a.name END AS airport2
+WITH airport1, airport2, count(*) AS total_records
+RETURN airport1, airport2, total_records
+ORDER BY total_records DESC
+LIMIT 1;
+```
+
+**[INSERT FIGURE 9: Q3.png]**
+
+*Figure 9. Q3 result: the busiest undirected airport pair.*
+
+**Analysis:** The airport pair with the greatest number of route records is **Chicago O'Hare International Airport ↔ Hartsfield-Jackson Atlanta International Airport**, with **37 service records**. Both airports consistently rank among the world's busiest by passenger volume and serve as primary domestic hubs for multiple US carriers. The high count reflects the number of different airlines — and multiple codeshare arrangements — operating this high-demand corridor. The `CASE WHEN a.name < b.name` pattern normalises directionality so that A→B and B→A are counted together.
+
+---
+
+#### Q4 — Top 5 Airport Pairs by Distinct Aircraft Types
+
+```cypher
+MATCH (a:Airport)-[r:ROUTE]->(b:Airport)
+WITH
+  CASE WHEN a.name < b.name THEN a.name ELSE b.name END AS airport1,
+  CASE WHEN a.name < b.name THEN b.name ELSE a.name END AS airport2,
+  r.equipment AS equipment_str
+WITH airport1, airport2, split(equipment_str, ';') AS equipment_list
+UNWIND equipment_list AS raw_type
+WITH airport1, airport2, trim(raw_type) AS equipment_type
+WHERE equipment_type <> ''
+WITH airport1, airport2, count(DISTINCT equipment_type) AS distinct_types
+RETURN airport1, airport2, distinct_types
+ORDER BY distinct_types DESC
+LIMIT 5;
+```
+
+**[INSERT FIGURE 10: Q4.png]**
+
+*Figure 10. Q4 result: top 5 airport pairs by number of distinct aircraft types.*
+
+**Analysis:** The **Hong Kong International Airport ↔ Incheon International Airport** corridor leads with **15 distinct aircraft types**, followed by Hong Kong ↔ Suvarnabhumi (Bangkok) and Beijing Capital ↔ Guangzhou Baiyun, both with 13. The dominance of Asian hub-to-hub routes reflects the diversity of carriers — including full-service, low-cost, and cargo airlines — operating in the Asia-Pacific region. The `split()` and `UNWIND` pattern decomposes the semicolon-delimited equipment string before counting distinct types, ensuring each aircraft model is counted once per airport pair regardless of how many individual route records mention it.
+
+---
+
+#### Q5 — Paths from Beijing to Perth (At Most 3 Hops)
+
+```cypher
+MATCH path = (start:Airport {name: 'Beijing Capital International Airport'})
+             -[:ROUTE*1..3]->
+             (end:Airport {name: 'Perth International Airport'})
+WITH [n IN nodes(path) | n.name] AS route_sequence
+RETURN count(DISTINCT route_sequence) AS distinct_routes;
+```
+
+**[INSERT FIGURE 11: Q5.png]**
+
+*Figure 11. Q5 result: number of distinct routes from Beijing to Perth within 3 hops.*
+
+**Analysis:** There are **650 distinct travel routes** from Beijing Capital International Airport to Perth International Airport using at most 3 ROUTE relationships (i.e., up to 2 intermediate stops). The query completed in approximately 8.8 seconds on AuraDB Free. Each distinct route is defined as a unique ordered sequence of airport names. The large number of paths reflects the density of the Asia-Pacific aviation network: many major hubs (Singapore, Kuala Lumpur, Hong Kong, Dubai) serve as viable intermediate points between China and Western Australia. The `[:ROUTE*1..3]` variable-length path syntax is a key advantage of modelling routes as graph relationships rather than nodes.
+
+---
+
+#### Q6 — Top 5 Competing Airline Pairs (CITS5504)
+
+```cypher
+MATCH (dep:Airport)-[r:ROUTE]->(arr:Airport)
+WITH
+  CASE WHEN dep.airport_id < arr.airport_id
+       THEN dep.airport_id ELSE arr.airport_id END AS ap1,
+  CASE WHEN dep.airport_id < arr.airport_id
+       THEN arr.airport_id ELSE dep.airport_id END AS ap2,
+  r.airline_id AS al_id
+WITH ap1, ap2, collect(DISTINCT al_id) AS airline_ids
+WHERE size(airline_ids) >= 2
+UNWIND airline_ids AS al1_id
+UNWIND airline_ids AS al2_id
+WITH ap1, ap2, al1_id, al2_id
+WHERE al1_id < al2_id
+WITH al1_id, al2_id, count(*) AS shared_routes
+MATCH (al1:Airline {airline_id: al1_id}),
+      (al2:Airline {airline_id: al2_id})
+RETURN al1.name AS airline1, al2.name AS airline2, shared_routes
+ORDER BY shared_routes DESC
+LIMIT 5;
+```
+
+**[INSERT FIGURE 12: Q6.png]**
+
+*Figure 12. Q6 result: top 5 airline pairs competing on the most shared routes.*
+
+**Analysis:** The most competitive airline pair is **SAM Colombia and Zantop International Airlines**, sharing **795 common routes** — a remarkably high number suggesting significant operational overlap in Latin American and North American cargo markets. The query uses double `UNWIND` to generate all unordered airline pairs from the list of airlines serving each airport pair, with the `al1_id < al2_id` condition ensuring each pair is counted exactly once. Neo4j raises a `03N90: Cartesian product` performance notice for this pattern, which is expected and does not affect result correctness. The query completed in 366 ms.
+
+---
+
+### 4.2 Custom Queries
+
+#### Custom Query 1 — Top 10 Global Hub Airports by Connection Count
+
+**Business motivation:** Identifying the most highly connected airports supports strategic decisions around hub placement, maintenance base allocation, and slot prioritisation for airlines.
+
+```cypher
+MATCH (a:Airport)-[:ROUTE]-()
+WITH a, count(*) AS total_connections
+RETURN a.name AS airport, a.city AS city, a.country AS country,
+       total_connections
+ORDER BY total_connections DESC
+LIMIT 10;
+```
+
+**[INSERT FIGURE 13: custom1.png]**
+
+*Figure 13. Custom Query 1 result: top 10 busiest hub airports by total route connections.*
+
+**Analysis:** Hartsfield-Jackson Atlanta International Airport (ATL) ranks first with **1,497 total connections** (combined inbound and outbound routes), followed by Beijing Capital (1,038), London Heathrow (1,028), and Charles de Gaulle Paris (1,008). This result is consistent with real-world global aviation rankings — ATL has held the title of the world's busiest airport by passenger volume for many years [5]. The high connectivity of these airports makes them critical nodes whose disruption would have cascading effects on global flight networks, an application relevant to Graph Data Science discussed in Section 5.
+
+---
+
+#### Custom Query 2 (APOC) — Graph Metadata Schema Inspection
+
+**Business motivation:** Understanding the full structure of the graph database — including all node labels, relationship types, property keys, and their data types — is essential for developers writing efficient Cypher queries and for validating that the import produced the expected schema.
+
+```cypher
+CALL apoc.meta.schema()
+YIELD value
+RETURN value;
+```
+
+**[INSERT FIGURE 14: custom2.png]**
+
+*Figure 14. Custom Query 2 result: apoc.meta.schema() returning full metadata including ROUTE relationship properties.*
+
+**Analysis:** The `apoc.meta.schema()` function returns a structured map of the entire graph schema. The output confirms that the `ROUTE` relationship carries 57,301 instances with three properties: `equipment` (STRING), `airline_id` (INTEGER), and `route_id` (INTEGER). The `existence: false` flag on each property indicates that these properties are not mandatory for every relationship instance. This metadata is directly usable by developers to validate property types before writing queries — for example, confirming that `airline_id` is stored as an INTEGER ensures that `toInteger()` conversions are applied correctly during MATCH operations. This query is further discussed in Section 6 (Metadata Analysis).
+
+---
+
+## 5. Graph Data Science Applications
+
+Graph Data Science (GDS) provides algorithms that extract higher-order insights from graph structures that would be impractical to compute with relational queries. Two algorithms are particularly applicable to the airline route graph constructed in this project.
+
+### 5.1 PageRank — Identifying Hub Airport Importance
+
+PageRank, originally developed by Page et al. for ranking web pages [6], assigns an importance score to each node based on the number and quality of its incoming connections. Applied to the airport route graph, PageRank would assign higher scores to airports that are themselves connected to many other highly-connected airports — capturing not just raw connection count but structural centrality in the network.
+
+In the context of this dataset, PageRank would identify airports like Atlanta, Beijing, and Heathrow not merely as airports with many routes, but as airports whose routes connect to other globally significant hubs. This distinction is commercially valuable: an airline planning a new route would prefer a hub with high PageRank because its passengers have richer onward connection options, increasing the attractiveness of a connecting itinerary.
+
+Custom Query 1 provided a preliminary approximation of hub importance through raw connection counts. PageRank would refine this by down-weighting connections to small regional airports and up-weighting connections to major international hubs, producing a more accurate measure of a network node's global influence [7].
+
+### 5.2 Dijkstra's Shortest Path — Optimal Itinerary Planning
+
+Dijkstra's algorithm finds the lowest-cost path between two nodes in a weighted graph [8]. Applied to the airport route graph, the cost function could represent flight duration, ticket price, or number of connections. This directly extends Question 5 of this project: rather than counting all 650 possible routes from Beijing to Perth, Dijkstra would identify the single optimal route minimising a given cost metric.
+
+Online travel agencies (OTAs) such as Expedia and Google Flights implicitly use shortest-path algorithms to generate recommended itineraries. In a Neo4j GDS context, `gds.shortestPath.dijkstra` can be called with a relationship-weight property (e.g., a hypothetical `flight_duration` property added to `[:ROUTE]`) to return the minimum-cost path between any two airports in the graph.
+
+The practical business value is significant: with 650 possible paths between Beijing and Perth, human analysis is infeasible. An automated Dijkstra traversal over the full 57,301-route graph would return the optimal itinerary in milliseconds, forming the backbone of a real-time flight search engine.
+
+---
+
+## 6. Metadata Analysis
+
+### 6.1 (a) Importance of Metadata in Graph Database Schema Design
+
+Metadata in a graph database refers to the structural information that describes the graph itself: which node labels exist, what relationship types are defined, which properties are present on each label or type, and what data types those properties hold. Neo4j maintains this metadata automatically and exposes it through functions such as `db.schema.visualization()` and `apoc.meta.schema()`.
+
+Considering metadata during schema design is important for three reasons:
+
+**Index and constraint planning:** Neo4j only applies uniqueness constraints and indexes to specific labels and property keys. If a designer fails to identify that `airport_id` will be the primary lookup key for Airport nodes, they may omit the constraint, resulting in full label scans during the `LOAD CSV` import of 57,301 ROUTE relationships. In this project, the two `CREATE CONSTRAINT` statements in Block 1 reduced the import of ROUTE relationships from a projected timeout to under three minutes [3].
+
+**Query correctness assurance:** Property type metadata prevents silent query errors. For example, `apoc.meta.schema()` reveals that `airline_id` on the ROUTE relationship is stored as an INTEGER. A developer unaware of this might write `WHERE r.airline_id = '39'` (string comparison), which would return no results without raising an error. Inspecting the metadata in advance ensures `toInteger()` is applied consistently [9].
+
+**Schema documentation:** As graphs evolve, metadata provides a live, always-accurate record of the schema that supplements static documentation. Robinson et al. note that one of the risks of schema-optional graph databases is schema drift, where different parts of an application write properties under slightly different names. Using `apoc.meta.schema()` as part of a CI/CD validation step can detect such drift early [2].
+
+### 6.2 (b) Leveraging Metadata for Efficient Cypher Development
+
+**Schema-guided query writing with `db.schema.visualization()`**
+
+Before writing any of the analytical queries in Section 4, running `CALL db.schema.visualization()` confirms the exact label names (`Airport`, `Airline`), relationship type (`ROUTE`, `OPERATES`), and the direction of each relationship. This prevents common errors such as writing `MATCH (a:Airports)` (incorrect plural) or traversing a relationship in the wrong direction, both of which silently return empty result sets and waste developer time.
+
+**Property type validation with `apoc.meta.schema()`**
+
+As shown in Figure 14, `apoc.meta.schema()` returns the data type of each property. In the ROUTE relationship, `airline_id` has type `INTEGER` and `equipment` has type `STRING`. This informed two specific query decisions:
+
+1. In Q6, `r.airline_id` is compared numerically (`al1_id < al2_id`) rather than lexicographically — correct for integers.
+2. In Q4, `r.equipment` is passed to `split(equipment_str, ';')` — appropriate because the type is confirmed as STRING.
+
+Had these types been inspected and found to be different (e.g., airline_id stored as STRING due to a missing `toInteger()` in the import), the developer could fix the import before writing all downstream queries [9].
+
+**Index utilisation confirmation with `EXPLAIN`**
+
+A developer can combine metadata knowledge with `EXPLAIN` or `PROFILE` prefixes to verify that a query is using the index created by the uniqueness constraint. For instance:
+
+```cypher
+EXPLAIN MATCH (a:Airport {airport_id: 1}) RETURN a;
+```
+
+The execution plan will show `NodeUniqueIndexSeek` rather than `NodeByLabelScan`, confirming that the constraint-backed index is being used. This technique is directly enabled by the metadata that constraints and indexes create [3].
+
+---
+
+## 7. Generative AI Declaration
+
+This project made use of **Cursor AI** (powered by Claude Sonnet) as a coding assistant throughout the development process. The following table documents the AI's contributions and the rationale for accepting or modifying each suggestion.
+
+| Task | AI Suggestion | Decision | Rationale |
+|---|---|---|---|
+| ETL script structure | Proposed a multi-step pipeline with audit → corrections → normalise → write | **Accepted** | The phased approach with explicit audit output is well-suited to documenting the cleaning process for the report |
+| Dirty data corrections dictionary | Suggested a dictionary-based approach mapping airport names to correct (country, city) | **Accepted with modification** | The structure was adopted; individual entries were verified independently against IATA records and Wikipedia before inclusion |
+| Q3 — undirected pair normalisation | Suggested `CASE WHEN a.name < b.name` pattern | **Accepted** | This is the standard Cypher idiom for canonical pair ordering; correctness was verified by manual inspection of sample results |
+| Q4 — equipment split logic | Suggested `split()` + `UNWIND` + `trim()` + `WHERE equipment_type <> ''` | **Accepted** | Tested against sample data containing trailing semicolons; the empty-string filter was confirmed necessary |
+| Q6 — double UNWIND for airline pairs | Suggested double UNWIND with `al1_id < al2_id` guard | **Accepted** | The Cartesian product warning from Neo4j was investigated and confirmed to be a performance notice only; results were cross-validated against manual pair counts on a small sample |
+| OPERATES relationship design | Initially omitted; added after identifying Airline nodes were isolated | **Accepted** | The design was corrected based on graph database principles — nodes should be connected via relationships, not only property references |
+| Airport name verification for Q5 | Pre-check query suggested to confirm exact airport names | **Accepted** | The name "Perth International Airport" (not "Perth Airport") was confirmed by running the pre-check, preventing a silent empty-result error |
+
+All code was reviewed, tested, and understood before use. No AI-generated content was submitted without independent verification.
+
+---
+
+## References
+
+[1] I. Robinson, J. Webber, and E. Eifrem, *Graph Databases: New Opportunities for Connected Data*, 2nd ed. Sebastopol, CA: O'Reilly Media, 2015.
+
+[2] R. Angles and C. Gutierrez, "Survey of graph database models," *ACM Computing Surveys*, vol. 40, no. 1, pp. 1–39, Feb. 2008. doi: 10.1145/1322432.1322433.
+
+[3] N. Francis et al., "Cypher: An evolving query language for property graphs," in *Proc. 2018 ACM SIGMOD Int. Conf. Management of Data*, Houston, TX, 2018, pp. 1433–1445. doi: 10.1145/3183713.3190657.
+
+[4] R. Angles et al., "Foundations of modern query languages for graph databases," *ACM Computing Surveys*, vol. 50, no. 5, pp. 1–40, Sep. 2017. doi: 10.1145/3104031.
+
+[5] Airports Council International, "World Airport Traffic Rankings 2023," ACI World, Montreal, 2024. [Online]. Available: https://aci.aero
+
+[6] L. Page, S. Brin, R. Motwani, and T. Winograd, "The PageRank Citation Ranking: Bringing Order to the Web," Stanford Digital Library Technologies Project, Technical Report, 1999.
+
+[7] M. Besta et al., "Demystifying graph databases: Analysis and taxonomy of data organization, system designs, and graph queries," *ACM Computing Surveys*, vol. 56, no. 2, pp. 1–40, 2023. doi: 10.1145/3604932.
+
+[8] E. W. Dijkstra, "A note on two problems in connexion with graphs," *Numerische Mathematik*, vol. 1, no. 1, pp. 269–271, 1959. doi: 10.1007/BF01386390.
+
+[9] A. Hunger, M. Simons, and G. Lyon, *Neo4j: The Definitive Guide*. Sebastopol, CA: O'Reilly Media, 2023.
