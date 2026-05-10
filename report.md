@@ -73,7 +73,13 @@ Without the `[:OPERATES]` relationship, the `Airline` nodes would be structurall
 
 The `(Airline)-[:OPERATES]->(Airport)` relationship was therefore added to encode "this airline operates at least one route departing from this airport." This relationship carries no properties because it expresses pure existence. It enables idiomatic Cypher queries such as `MATCH (al:Airline)-[:OPERATES]->(ap:Airport)` and ensures the schema visualisation correctly reflects the connected structure of the graph.
 
-#### 1.2.4 Equipment Stored as a Semicolon-Separated String
+#### 1.2.4 Country Stored as a Node Property, Not a Separate Node
+
+An alternative design would represent each country as a dedicated `Country` node, with `Airport` and `Airline` nodes connected to it via a `[:LOCATED_IN]` or `[:REGISTERED_IN]` relationship. This would eliminate the redundancy of storing the same country string across hundreds of airport records and would allow efficient traversal of the form "find all airports in a given country."
+
+However, for this project, `country` is retained as a string property on both `Airport` and `Airline` nodes. This decision is justified by the query requirements: all country-based filters in Q1–Q6 are simple equality checks (`WHERE a.country = 'Australia'`), which are efficiently served by a property index. Introducing `Country` nodes would require an additional relationship hop for every country-based filter without providing traversal benefits, since no query requires navigating from one country to another through the graph. The trade-off — slight data redundancy in exchange for simpler queries — is appropriate for a route-focused analytical workload [6].
+
+#### 1.2.5 Equipment Stored as a Semicolon-Separated String
 
 The original dataset stores aircraft types as a semicolon-delimited string per route record (e.g., `"Boeing 737;Airbus A320;ATR 72"`). Rather than normalising this into separate `AircraftType` nodes, the raw string is preserved on the `[:ROUTE]` relationship's `equipment` property. At query time, Cypher's built-in `split()` function and `UNWIND` clause are used to decompose the string into individual types for counting (Question 4).
 
@@ -103,7 +109,7 @@ The audit stage extracted all unique airport records from both the departure and
 
 #### 2.2.2 Corrections Applied
 
-A corrections dictionary was compiled by cross-referencing each conflicting airport against the IATA airport database and Wikipedia. Each entry specifies the verified correct country and city. The script then applied these corrections to all affected rows in the raw DataFrame.
+A corrections dictionary was compiled by cross-referencing each conflicting airport against the OurAirports database [10] and Wikipedia [11]. Each entry specifies the verified correct country and city. The script then applied these corrections to all affected rows in the raw DataFrame.
 
 The most significant correction — and the one explicitly flagged by the unit coordinator in the course forum — was **Sydney Kingsford Smith International Airport** (IATA: SYD), which appeared with `country = "Canada"` in 175 arrival rows. This was corrected to `Australia` based on the airport's verified IATA registration.
 
@@ -172,6 +178,57 @@ for airport_name, fix in CORRECTIONS.items():
 ```
 
 *Code listing 1. Excerpt from etl.py showing the CORRECTIONS dictionary structure and the loop that applies each fix to both departure and arrival columns.*
+
+#### 2.2.3 Complete Corrections Log
+
+The following table lists all 31 airports corrected during the cleaning process, cross-referenced against OurAirports [10] and Wikipedia [11]. Each entry shows the incorrect country present in the raw data and the verified correct country applied by the ETL script.
+
+| # | Airport Name | Incorrect Country (Raw) | Correct Country | Rows Fixed | IATA |
+|---|---|---|---|---|---|
+| 1 | Sydney Kingsford Smith International Airport | Canada | Australia | 175 | SYD |
+| 2 | London Heathrow Airport | Canada | United Kingdom | 512 | LHR |
+| 3 | London Gatwick Airport | Canada | United Kingdom | 255 | LGW |
+| 4 | London Stansted Airport | Canada | United Kingdom | 157 | STN |
+| 5 | London Luton Airport | Canada | United Kingdom | 94 | LTN |
+| 6 | London City Airport | Canada | United Kingdom | 65 | LCY |
+| 7 | Comodoro Arturo Merino Benitez International Airport | Spain | Chile | 77 | SCL |
+| 8 | Luis Munoz Marin International Airport | Argentina | Puerto Rico | 81 | SJU |
+| 9 | Cochin International Airport | Japan | India | 50 | COK |
+| 10 | Norman Y. Mineta San Jose International Airport | Costa Rica | United States | 45 | SJC |
+| 11 | Norman Manley International Airport | Canada | Jamaica | 27 | KIN |
+| 12 | St Petersburg Clearwater International Airport | Russia | United States | 20 | PIE |
+| 13 | Birmingham-Shuttlesworth International Airport | United Kingdom | United States | 14 | BHM |
+| 14 | El Alto International Airport | Mexico | Bolivia | 13 | LPB |
+| 15 | Cibao International Airport | Spain | Dominican Republic | 10 | STI |
+| 16 | General Jose Antonio Anzoategui International Airport | Spain | Venezuela | 8 | BLA |
+| 17 | Cheddi Jagan International Airport | Cayman Islands | Guyana | 8 | GEO |
+| 18 | Arturo Michelena International Airport | Spain | Venezuela | 7 | VLN |
+| 19 | Tri-Cities Regional TN/VA Airport | United Kingdom | United States | 6 | TRI |
+| 20 | Charles M. Schulz Sonoma County Airport | Argentina | United States | 6 | STS |
+| 21 | Northwest Florida Beaches International Airport | Panama | United States | 4 | ECP |
+| 22 | Atlas Brasil Cantanhede Airport | Cape Verde | Brazil | 3 | BVH |
+| 23 | Presidente Joao Batista Figueiredo Airport | Turkey | Brazil | 3 | OPS |
+| 24 | St Pierre Airport | Reunion | Saint Pierre and Miquelon | 3 | FSP |
+| 25 | Mayor Buenaventura Vivas International Airport | Dominican Republic | Venezuela | 3 | STD |
+| 26 | Alberto Carnevalli Airport | Mexico | Venezuela | 2 | MRD |
+| 27 | Fort Smith Regional Airport | Canada | United States | 2 | FSM |
+| 28 | Florence Regional Airport | Italy | United States | 2 | FLO |
+| 29 | Futuna Airport | Wallis and Futuna | Vanuatu | 2 | FTA |
+| 30 | Eugene F. Correira International Airport | Cayman Islands | Guyana | 1 | OGL |
+| 31 | JAGS McCartney International Airport | Bahamas | Turks and Caicos Islands | 1 | GDT |
+| | **Total** | | | **1,656** | |
+
+*Table 1. Complete airport country/city correction log. Incorrect countries were verified against OurAirports [10] and Wikipedia [11] before correction.*
+
+The most systematic pattern was **five London airports** all misattributed to Canada (1,083 rows combined), and **four Venezuelan airports** misattributed to Spain or Mexico (20 rows combined). The primary correction flagged by the unit coordinator — Sydney Kingsford Smith International Airport (SYD) listed under Canada — accounted for 175 rows.
+
+Ten additional airports with ambiguous names (e.g., "Albany Airport" exists legitimately in both the United States and Australia as distinct airports) were not corrected programmatically. Instead, the most frequently occurring (city, country) combination per airport name was retained as the canonical record.
+
+#### 2.2.4 Known Limitation: Airline–Route Linkage Errors
+
+A separate data quality issue was identified during this project and independently reported in the unit forum (QA thread, 6–7 May 2026): the IATA codes used to link airline records to route records in the source dataset appear to be **systematically incorrect**. Specifically, the IATA codes in the combined CSV were assigned alphabetically from the source airline file rather than from verified IATA registrations. As a result, nearly all flight routes in the dataset are attributed to incorrect airlines. One illustrative example: *Thai Flying Helicopter Service* — a small Thai operator — appears to be associated with hundreds of domestic US routes served by Boeing 767 and Boeing 777-200LR aircraft, which are characteristic of large American carriers such as Delta Air Lines, not a Thai helicopter company.
+
+In accordance with the unit coordinator's explicit guidance ("you are not required to correct the error — simply proceed with the dataset as provided"), **no airline-route linkage corrections were applied**. The dataset is used as-is for all queries. This limitation is disclosed here as a required element of thorough ETL documentation. Analytical findings from queries involving airline identity (notably Q6 and the OPERATES relationship) should be understood as reflecting the dataset's internal structure rather than verified real-world airline operations.
 
 ### 2.3 Output Files
 
@@ -531,3 +588,7 @@ All code was reviewed, tested, and understood before use. No AI-generated conten
 [8] E. W. Dijkstra, "A note on two problems in connexion with graphs," *Numerische Mathematik*, vol. 1, no. 1, pp. 269–271, 1959. doi: 10.1007/BF01386390.
 
 [9] A. Hunger, M. Simons, and G. Lyon, *Neo4j: The Definitive Guide*. Sebastopol, CA: O'Reilly Media, 2023.
+
+[10] OurAirports, "Airport data," OurAirports.com. [Online]. Available: https://ourairports.com/data/. [Accessed: May 2026]. (Used as authoritative reference for airport country/city corrections in ETL.)
+
+[11] Wikipedia contributors, "List of airports," *Wikipedia, The Free Encyclopedia*. [Online]. Available: https://en.wikipedia.org/wiki/List_of_airports. [Accessed: May 2026]. (Supplementary reference for individual airport country verification.)
