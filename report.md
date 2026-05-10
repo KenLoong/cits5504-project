@@ -1,9 +1,8 @@
 # Project 2 – Graph Database Design and Cypher Query
 
-**Unit:** CITS5504 Data Warehousing  
-**Student Name:** Junjian Long
-**Student Number:** 24702822
-**Submission Date:** 15 May 2025
+- **Unit:** CITS5504 Data Warehousing  
+- **Student Name:** Junjian Long
+- **Student Number:** 24702822
 
 ---
 
@@ -13,7 +12,7 @@
 
 The property graph schema was designed using the Arrows App and is shown in Figure 1 below. The model consists of two node types — **Airport** and **Airline** — and two relationship types — **ROUTE** and **OPERATES**.
 
-**[INSERT FIGURE 1: arrow_schema.png — Arrows.app schema diagram]**
+![Figure 1. Property graph schema designed in Arrows App](./image/Figure1.png)
 
 *Figure 1. Property graph schema designed in Arrows App.*
 
@@ -103,7 +102,7 @@ The ETL (Extract, Transform, Load) pipeline was implemented as a Python script (
 
 The audit stage extracted all unique airport records from both the departure and arrival columns of every row. Each airport's (city, country) combination was checked for consistency. The audit identified **41 airports** with conflicting country or city values across different rows — indicating that the same real-world airport had been attributed to multiple countries in the source data.
 
-**[INSERT FIGURE 2: ETL terminal output — Step 2 audit showing the 41 inconsistent airports]**
+![Figure 2](./image/Figure2.png)
 
 *Figure 2. Audit output from etl.py showing airports with inconsistent country/city values.*
 
@@ -120,7 +119,7 @@ Beyond Sydney, a further 30 airports were corrected, totalling **1,656 rows** up
 - **Cochin International Airport** (IATA: COK, Kochi, India) — misattributed to `Japan`, corrected to `India` (50 rows).
 - **St Petersburg Clearwater International Airport** (IATA: PIE, Florida, USA) — misattributed to `Russia`, corrected to `United States` (20 rows).
 
-**[INSERT FIGURE 3: ETL terminal output — Step 3 correction log showing all FIXED entries]**
+![Figure 3](./image/Figure3.png)
 
 *Figure 3. Correction log from etl.py listing each fixed airport and the number of rows updated.*
 
@@ -290,7 +289,7 @@ CALL {
 
 After all six import blocks completed, the database contained the following:
 
-**[INSERT FIGURE 5: AuraDB left panel showing Nodes (3,283), Relationships (74,069), node labels (Airline, Airport), relationship types (OPERATES, ROUTE), and all property keys]**
+![Figure 5](./image/Figure5.png)
 
 *Figure 5. Neo4j AuraDB database information panel confirming successful import.*
 
@@ -303,7 +302,7 @@ After all six import blocks completed, the database contained the following:
 | OPERATES relationships | 16,768 |
 | **Total relationships** | **74,069** |
 
-**[INSERT FIGURE 6: Screenshot of CALL db.schema.visualization() output — showing (Airline)→[OPERATES]→(Airport)→[ROUTE]→(Airport) graph structure]**
+![Figure 6](./image/Figure6.png)
 
 *Figure 6. Schema visualisation confirming the connected three-entity graph structure.*
 
@@ -321,7 +320,7 @@ RETURN DISTINCT al.name AS airline_name
 ORDER BY al.name;
 ```
 
-**[INSERT FIGURE 7: Q1.png]**
+![Figure 7. Q1 result](./image/Q1.png)
 
 *Figure 7. Q1 result: three Australian airlines in the dataset.*
 
@@ -342,7 +341,7 @@ RETURN route_type, count(*) AS record_count
 ORDER BY route_type;
 ```
 
-**[INSERT FIGURE 8: Q2.png]**
+![Figure 8. Q2 result](./image/Q2.png)
 
 *Figure 8. Q2 result: domestic and international route record counts.*
 
@@ -363,7 +362,7 @@ ORDER BY total_records DESC
 LIMIT 1;
 ```
 
-**[INSERT FIGURE 9: Q3.png]**
+![Figure 9. Q3 result](./image/Q3.png)
 
 *Figure 9. Q3 result: the busiest undirected airport pair.*
 
@@ -389,7 +388,7 @@ ORDER BY distinct_types DESC
 LIMIT 5;
 ```
 
-**[INSERT FIGURE 10: Q4.png]**
+![Figure 10. Q4 result](./image/Q4.png)
 
 *Figure 10. Q4 result: top 5 airport pairs by number of distinct aircraft types.*
 
@@ -407,7 +406,7 @@ WITH [n IN nodes(path) | n.name] AS route_sequence
 RETURN count(DISTINCT route_sequence) AS distinct_routes;
 ```
 
-**[INSERT FIGURE 11: Q5.png]**
+![Figure 11. Q5 result](./image/Q5.png)
 
 *Figure 11. Q5 result: number of distinct routes from Beijing to Perth within 3 hops.*
 
@@ -439,7 +438,7 @@ ORDER BY shared_routes DESC
 LIMIT 5;
 ```
 
-**[INSERT FIGURE 12: Q6.png]**
+![Figure 12. Q6 result](./image/Q6.png)
 
 *Figure 12. Q6 result: top 5 airline pairs competing on the most shared routes.*
 
@@ -462,7 +461,7 @@ ORDER BY total_connections DESC
 LIMIT 10;
 ```
 
-**[INSERT FIGURE 13: custom1.png]**
+![Figure 13. Custom Query 1 result](./image/custom1.png)
 
 *Figure 13. Custom Query 1 result: top 10 busiest hub airports by total route connections.*
 
@@ -480,7 +479,7 @@ YIELD value
 RETURN value;
 ```
 
-**[INSERT FIGURE 14: custom2.png]**
+![Figure 14. Custom Query 2 result](./image/custom2.png)
 
 *Figure 14. Custom Query 2 result: apoc.meta.schema() returning full metadata including ROUTE relationship properties.*
 
