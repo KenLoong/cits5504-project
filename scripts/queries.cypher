@@ -17,8 +17,9 @@ ORDER BY a.country;
 
 // ============================================================
 // Q1 (a) — List all distinct airline names from Australia
+// Uses [:OPERATES] to ensure only active airlines are returned
 // ============================================================
-MATCH (al:Airline {country: 'Australia'})
+MATCH (al:Airline {country: 'Australia'})-[:OPERATES]->()
 RETURN DISTINCT al.name AS airline_name
 ORDER BY al.name;
 
@@ -147,3 +148,21 @@ LIMIT 10;
 CALL apoc.meta.schema()
 YIELD value
 RETURN value;
+
+
+// ============================================================
+// CUSTOM QUERY 3 (APOC) — Airport network degree distribution
+//
+// Uses apoc.coll.avg / apoc.coll.max / apoc.coll.min to compute
+// descriptive statistics on the number of routes per airport,
+// characterising the connectivity distribution of the network.
+// ============================================================
+MATCH (a:Airport)
+WITH a, count { (a)-[:ROUTE]-() } AS degree
+WITH collect(degree) AS all_degrees
+RETURN
+  size(all_degrees)                              AS total_airports,
+  apoc.coll.avg(all_degrees)                    AS mean_connections,
+  apoc.coll.max(all_degrees)                    AS max_connections,
+  apoc.coll.min(all_degrees)                    AS min_connections,
+  size([d IN all_degrees WHERE d >= 100])        AS major_hubs;

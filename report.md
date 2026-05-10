@@ -266,6 +266,10 @@ CREATE CONSTRAINT airline_id_unique IF NOT EXISTS
   FOR (al:Airline) REQUIRE al.airline_id IS UNIQUE;
 ```
 
+**Blocks 2 and 3 — Airport and Airline Nodes**
+
+Blocks 2 and 3 import the 2,795 Airport nodes and 488 Airline nodes respectively using straightforward `LOAD CSV ... CREATE` statements with `toInteger()` type casting. These blocks are omitted here for brevity but are included in full in the `import.cypher` script provided in the submission `.zip` file.
+
 **Block 4 — ROUTE Relationships (batched import)**
 
 The 57,301 route records were imported using `CALL { } IN TRANSACTIONS OF 1000 ROWS` to process the dataset in batches of 1,000, preventing memory overflow on the free-tier instance.
@@ -315,7 +319,7 @@ After all six import blocks completed, the database contained the following:
 #### Q1 — Distinct Australian Airlines
 
 ```cypher
-MATCH (al:Airline {country: 'Australia'})
+MATCH (al:Airline {country: 'Australia'})-[:OPERATES]->()
 RETURN DISTINCT al.name AS airline_name
 ORDER BY al.name;
 ```
@@ -324,7 +328,7 @@ ORDER BY al.name;
 
 *Figure 7. Q1 result: three Australian airlines in the dataset.*
 
-**Analysis:** The query returns three airlines: *Transaustralian Air Express*, *Transpac Express*, and *Whyalla Airlines*. The small number reflects that this dataset primarily captures international route data from the OpenFlights database, which has limited coverage of regional Australian domestic operators. Major carriers such as Qantas are not present in this extract.
+**Analysis:** The query returns three airlines: *Transaustralian Air Express*, *Transpac Express*, and *Whyalla Airlines*. By requiring an outgoing `[:OPERATES]` relationship, the query ensures only active airlines with at least one registered departure airport are returned, ignoring any dormant entries that may exist in the airline registry without associated routes. The small number reflects that this dataset primarily captures international route data from the OpenFlights database, which has limited coverage of regional Australian domestic operators. Major carriers such as Qantas are not present in this extract.
 
 ---
 
@@ -444,6 +448,8 @@ LIMIT 5;
 
 **Analysis:** The most competitive airline pair is **SAM Colombia and Zantop International Airlines**, sharing **795 common routes** — a remarkably high number suggesting significant operational overlap in Latin American and North American cargo markets. The query uses double `UNWIND` to generate all unordered airline pairs from the list of airlines serving each airport pair, with the `al1_id < al2_id` condition ensuring each pair is counted exactly once. Neo4j raises a `03N90: Cartesian product` performance notice for this pattern, which is expected and does not affect result correctness. The query completed in 366 ms.
 
+Although the graph includes `[:OPERATES]` relationships that connect Airline nodes to departure airports, this query derives airline identity directly from the `airline_id` property on the `[:ROUTE]` relationship. This property-centric approach avoids the overhead of expanding through `Airline` nodes during the computationally intensive Cartesian product generation phase, optimising execution speed while delivering the correct analytical result. The `[:OPERATES]` relationship is more appropriate for graph traversal queries that start from an airline and navigate outward, rather than for aggregation-heavy pair-counting workloads of this type.
+
 ---
 
 ### 4.2 Custom Queries
@@ -487,6 +493,30 @@ RETURN value;
 
 ---
 
+#### Custom Query 3 (APOC) — Airport Network Degree Distribution
+
+**Business motivation:** Understanding the statistical distribution of route counts across all airports reveals the structural characteristics of the airline network — specifically, whether connectivity is evenly distributed or concentrated in a small number of dominant hubs. This informs strategic decisions about network resilience, slot allocation, and hub expansion.
+
+```cypher
+MATCH (a:Airport)
+WITH a, count { (a)-[:ROUTE]-() } AS degree
+WITH collect(degree) AS all_degrees
+RETURN
+  size(all_degrees)                              AS total_airports,
+  apoc.coll.avg(all_degrees)                    AS mean_connections,
+  apoc.coll.max(all_degrees)                    AS max_connections,
+  apoc.coll.min(all_degrees)                    AS min_connections,
+  size([d IN all_degrees WHERE d >= 100])        AS major_hubs;
+```
+
+![Figure 15. Custom Query 3 result](./image/custom3.png)
+
+*Figure 15. Custom Query 3 result: network degree statistics across all 2,795 airports.*
+
+**Analysis:** The results reveal a strongly skewed network topology. Across all **2,795 airports**, the mean route count is approximately **41.0**, yet the maximum is **1,497** — more than 36× the average. The minimum of **1** confirms that many airports are leaf nodes serving a single connection. Only **277 airports (9.9%)** qualify as major hubs with 100 or more routes, yet these airports concentrate the bulk of global connectivity. This heavy-tailed distribution is a hallmark of a **scale-free network** [7], where a small number of highly connected hubs dominate the topology. `apoc.coll.avg`, `apoc.coll.max`, and `apoc.coll.min` are APOC Core collection functions that operate on an in-memory list, enabling concise one-pass descriptive statistics without multi-step aggregation. The query completed in 136 ms.
+
+---
+
 ## 5. Graph Data Science Applications
 
 Graph Data Science (GDS) provides algorithms that extract higher-order insights from graph structures that would be impractical to compute with relational queries. Two algorithms are particularly applicable to the airline route graph constructed in this project.
@@ -506,6 +536,33 @@ Dijkstra's algorithm finds the lowest-cost path between two nodes in a weighted 
 Online travel agencies (OTAs) such as Expedia and Google Flights implicitly use shortest-path algorithms to generate recommended itineraries. In a Neo4j GDS context, `gds.shortestPath.dijkstra` can be called with a relationship-weight property (e.g., a hypothetical `flight_duration` property added to `[:ROUTE]`) to return the minimum-cost path between any two airports in the graph.
 
 The practical business value is significant: with 650 possible paths between Beijing and Perth, human analysis is infeasible. An automated Dijkstra traversal over the full 57,301-route graph would return the optimal itinerary in milliseconds, forming the backbone of a real-time flight search engine.
+
+To execute either algorithm in Neo4j GDS, a named in-memory graph projection would first be created from the existing property graph:
+
+```cypher
+// Project the flight network for GDS algorithms
+CALL gds.graph.project(
+  'flightGraph',
+  'Airport',
+  { ROUTE: { orientation: 'NATURAL' } }
+);
+
+// PageRank on the projected graph
+CALL gds.pageRank.stream('flightGraph')
+YIELD nodeId, score
+RETURN gds.util.asNode(nodeId).name AS airport, score
+ORDER BY score DESC LIMIT 10;
+
+// Dijkstra from Beijing to Perth (requires a numeric weight property)
+CALL gds.shortestPath.dijkstra.stream('flightGraph', {
+  sourceNode: gds.util.asNode('Beijing Capital International Airport'),
+  targetNode: gds.util.asNode('Perth International Airport'),
+  relationshipWeightProperty: 'flight_duration'
+})
+YIELD path RETURN path;
+```
+
+*Note: The above is illustrative pseudocode. The current dataset does not include a `flight_duration` property; one would need to be added to `[:ROUTE]` relationships during an extended ETL process before Dijkstra's algorithm could be applied with a meaningful cost function.*
 
 ---
 
