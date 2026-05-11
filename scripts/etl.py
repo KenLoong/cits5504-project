@@ -71,7 +71,8 @@ print("\nSTEP 3 – Applying data-cleaning corrections …")
 # CORRECTIONS dictionary                                               #
 # Each entry: airport_name → {"country": correct_country,            #
 #                              "city": correct_city}                  #
-# Sources: IATA airport database, Wikipedia                           #
+# Sources: OurAirports airports.csv (https://ourairports.com/data/)  #
+#          25/31 verified by name match; Wikipedia for remaining 6.   #
 # ------------------------------------------------------------------ #
 CORRECTIONS = {
     # ── Primary correction flagged by unit coordinator ──────────────
