@@ -130,7 +130,7 @@ Following corrections, 10 airports with genuinely ambiguous names (e.g., "Albany
 The core cleaning logic uses a `CORRECTIONS` dictionary (sourced from IATA records and Wikipedia) and a loop that applies each fix to both the departure and arrival columns:
 
 ```python
-# Sources: IATA airport database, Wikipedia
+# Sources: OurAirports (https://ourairports.com/data/) and Wikipedia
 CORRECTIONS = {
     # Primary correction flagged by unit coordinator
     "Sydney Kingsford Smith International Airport": {
@@ -614,7 +614,7 @@ This project made use of **Cursor AI** (powered by Claude Sonnet) as a coding as
 | Task | AI Suggestion | Decision | Rationale |
 |---|---|---|---|
 | ETL script structure | Proposed a multi-step pipeline with audit → corrections → normalise → write | **Accepted** | The phased approach with explicit audit output is well-suited to documenting the cleaning process for the report |
-| Dirty data corrections dictionary | Suggested a dictionary-based approach mapping airport names to correct (country, city) | **Accepted with modification** | The structure was adopted; individual entries were verified independently against IATA records and Wikipedia before inclusion |
+| Dirty data corrections dictionary | Suggested a dictionary-based approach mapping airport names to correct (country, city) | **Accepted with modification** | The structure was adopted; individual entries were verified independently against OurAirports (https://ourairports.com/data/) and Wikipedia before inclusion |
 | Q3 — undirected pair normalisation | Suggested `CASE WHEN a.name < b.name` pattern | **Accepted** | This is the standard Cypher idiom for canonical pair ordering; correctness was verified by manual inspection of sample results |
 | Q4 — equipment split logic | Suggested `split()` + `UNWIND` + `trim()` + `WHERE equipment_type <> ''` | **Accepted** | Tested against sample data containing trailing semicolons; the empty-string filter was confirmed necessary |
 | Q6 — double UNWIND for airline pairs | Suggested double UNWIND with `al1_id < al2_id` guard | **Accepted** | The Cartesian product warning from Neo4j was investigated and confirmed to be a performance notice only; results were cross-validated against manual pair counts on a small sample |
