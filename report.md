@@ -635,7 +635,7 @@ All code was reviewed, tested, and understood before use. No AI-generated conten
 
 [4] R. Angles et al., "Foundations of modern query languages for graph databases," *ACM Computing Surveys*, vol. 50, no. 5, pp. 1–40, Sep. 2017. doi: 10.1145/3104031.
 
-[5] Airports Council International, "World Airport Traffic Rankings 2023," ACI World, Montreal, 2024. [Online]. Available: https://aci.aero
+[5] Airports Council International, "World Airport Traffic Report 2023," ACI World, Montreal, 2024. [Online]. Available: https://aci.aero/2024/04/23/aci-world-releases-2023-world-airport-traffic-report/. [Accessed: May 2026].
 
 [6] L. Page, S. Brin, R. Motwani, and T. Winograd, "The PageRank Citation Ranking: Bringing Order to the Web," Stanford Digital Library Technologies Project, Technical Report, 1999.
 
@@ -643,7 +643,7 @@ All code was reviewed, tested, and understood before use. No AI-generated conten
 
 [8] E. W. Dijkstra, "A note on two problems in connexion with graphs," *Numerische Mathematik*, vol. 1, no. 1, pp. 269–271, 1959. doi: 10.1007/BF01386390.
 
-[9] A. Hunger, M. Simons, and G. Lyon, *Neo4j: The Definitive Guide*. Sebastopol, CA: O'Reilly Media, 2023.
+[9] Neo4j, Inc., "Cypher Manual: Type conversion functions," *Neo4j Documentation*, 2024. [Online]. Available: https://neo4j.com/docs/cypher-manual/current/functions/type-conversion/. [Accessed: May 2026].
 
 [10] OurAirports, "Airport data," OurAirports.com. [Online]. Available: https://ourairports.com/data/. [Accessed: May 2026]. (Used as authoritative reference for airport country/city corrections in ETL.)
 
